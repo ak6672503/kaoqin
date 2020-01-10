@@ -12,7 +12,9 @@
 #define new DEBUG_NEW
 #endif
 #include <string>
-
+#include <fstream>
+#include<tchar.h>
+using namespace std;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -159,22 +161,149 @@ HCURSOR CTimerDlg::OnQueryDragIcon()
 
 void CTimerDlg::OnBnClickedDuqu()
 {
+
+	/*自己的代码
 	//打开读取文件的对话框，然后读取文件名称
 	CFileDialog fileDlg(TRUE); //创建读取的对话框
 	fileDlg.m_ofn.lpstrTitle = L"选择所要打开的文件";
 	if (IDOK == fileDlg.DoModal()) {
-		//CFile file(fileDlg.GetFileName(), CFile::modeRead);
-
-		CString str = fileDlg.GetFileName();
-		//file.Close();
-		int len = str.GetLength();
-		CString L;
-		L.Format(L"%d", len);
-		MessageBox(L);
 		
 
+		CString str = fileDlg.GetFileName();
+
+	
+		CString Data = str;
+		CString temp = L".";
+		CString Data1, Data2, Data3;
+
+		int flag = Data.Find(temp); //返回后缀开始的位置
+
+		if (flag >= 0)
+		{
+
+			Data = Data.Left(Data.Find(temp)); //从一个字符串中把后缀去掉 留下左边的
+		AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
+		AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
+		AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
+
+		CStringA Data1A((LPCTSTR)Data1);
+		CStringA Data2A((LPCTSTR)Data2);
+		CStringA Data3A((LPCTSTR)Data3);
+
+
+		
+		int i = Data1A.GetLength();
+		int i2 = Data2A.GetLength();
+		int i3 = Data3A.GetLength();
+		
+		ofstream ofs("12月考勤.txt");
+		ofs.write(Data1A, i);
+		ofs.write(Data2A, i2);
+		ofs.write(Data3A, i3);
+		
+		ofs.close();
+
+		
+
+
+
+		}
+		else {
+			temp = "文件不对!";
+			MessageBox(temp);
+		}
 	}
+	*/
 
 
+	CString pathName, fileName, fileTitle;
 
+	//const char* filters = ("all files(*.*)|*.*||");
+	//创建一个可以选择多个文件的CFileDialog
+	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT);
+		
+		
+	//最多可以打开500个文件
+	fileDlg.m_ofn.nMaxFile = 500 * MAX_PATH;
+
+	 char* ch = new CHAR[fileDlg.m_ofn.nMaxFile];
+	fileDlg.m_ofn.lpstrFile = ch;
+
+	//对内存块清零
+	ZeroMemory(fileDlg.m_ofn.lpstrFile, sizeof(TCHAR) * fileDlg.m_ofn.nMaxFile);
+
+	//显示文件对话框，获得文件名集合
+	if (fileDlg.DoModal() == IDOK) {
+
+		//获取第一个文件的位置
+		POSITION pos_file;
+		pos_file = fileDlg.GetStartPosition();
+
+		//用CString数组存放文件的路径
+		CArray<CString, CString> ary_filename;
+		//存放文件的标题
+		CArray<CString, CString> ary_fileTitle;
+
+		//循环读出每个路径并存放在数组中
+		while (pos_file != NULL) {
+
+			//将文件路径存放在数组中
+			pathName = fileDlg.GetNextPathName(pos_file);
+			ary_filename.Add(pathName);
+
+			//获取文件名
+			//从字符串的后面往前遍历，如果遇到'\'则结束遍历，'\'右边的字符串则为文件名
+			int length = pathName.GetLength();
+			for (int i = length - 1; i > 0; i--)
+			{
+				if ('\\' == (pathName.GetAt(i)))
+				{//判断当前字符是否是'\'
+					fileName = pathName.Right(length - i - 1);
+						break;//跳出循环
+				}
+			}//endfor
+
+			//获取文件名(不包含后缀)
+			//采用CString的Left(int count)截取CString中从左往右数的count个字符
+			//fileName.GetLength()-4中的4表示".dat"四个字符
+
+			fileTitle = fileName.Left(fileName.GetLength() - 4);
+			//AfxMessageBox(fileTitle);
+			ary_fileTitle.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
+		
+		
+		}
+		
+		for (int i = 0; i < ary_fileTitle.GetSize(); i++)
+		{
+			CString Data = ary_fileTitle.GetAt(i);
+			CString Data1, Data2, Data3;
+
+			AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
+			AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
+			AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
+
+			CStringA Data1A((LPCTSTR)Data1);
+			CStringA Data2A((LPCTSTR)Data2);
+			CStringA Data3A((LPCTSTR)Data3);
+
+			int i1 = Data1A.GetLength();
+			int i2 = Data2A.GetLength();
+			int i3 = Data3A.GetLength();
+
+			ofstream ofs("12月考勤.txt" ,ios::app);
+			ofs.write(Data1A, i1);
+			ofs.write("\t",strlen("\t"));
+			ofs.write(Data2A, i2);
+			ofs.write("\t", strlen("\t"));
+			ofs.write(Data3A, i3);
+			ofs.write("\n", strlen("\n"));
+			ofs.close();
+
+			
+		}
+
+	}
+	delete[] ch;
+	
 }
