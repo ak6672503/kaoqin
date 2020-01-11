@@ -1,7 +1,8 @@
 ﻿
 // TimerDlg.h: 头文件
 //
-
+#include <map>
+using namespace std;
 #pragma once
 
 
@@ -33,4 +34,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedDuqu();
+	afx_msg void OnBnClickedPeizhi();
+
+public:
+	//用CString数组存放人名和对应的单位名称
+	map<CString,CString> ary_People ;
+
 };

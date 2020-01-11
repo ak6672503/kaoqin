@@ -14,6 +14,7 @@
 #include <string>
 #include <fstream>
 #include<tchar.h>
+#include"resource.h"
 using namespace std;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -69,6 +70,7 @@ BEGIN_MESSAGE_MAP(CTimerDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_DUQU, &CTimerDlg::OnBnClickedDuqu)
+	ON_BN_CLICKED(IDC_PEIZHI, &CTimerDlg::OnBnClickedPeizhi)
 END_MESSAGE_MAP()
 
 
@@ -161,65 +163,11 @@ HCURSOR CTimerDlg::OnQueryDragIcon()
 
 void CTimerDlg::OnBnClickedDuqu()
 {
-
-	/*自己的代码
-	//打开读取文件的对话框，然后读取文件名称
-	CFileDialog fileDlg(TRUE); //创建读取的对话框
-	fileDlg.m_ofn.lpstrTitle = L"选择所要打开的文件";
-	if (IDOK == fileDlg.DoModal()) {
-		
-
-		CString str = fileDlg.GetFileName();
-
 	
-		CString Data = str;
-		CString temp = L".";
-		CString Data1, Data2, Data3;
-
-		int flag = Data.Find(temp); //返回后缀开始的位置
-
-		if (flag >= 0)
-		{
-
-			Data = Data.Left(Data.Find(temp)); //从一个字符串中把后缀去掉 留下左边的
-		AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
-		AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
-		AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
-
-		CStringA Data1A((LPCTSTR)Data1);
-		CStringA Data2A((LPCTSTR)Data2);
-		CStringA Data3A((LPCTSTR)Data3);
-
-
-		
-		int i = Data1A.GetLength();
-		int i2 = Data2A.GetLength();
-		int i3 = Data3A.GetLength();
-		
-		ofstream ofs("12月考勤.txt");
-		ofs.write(Data1A, i);
-		ofs.write(Data2A, i2);
-		ofs.write(Data3A, i3);
-		
-		ofs.close();
-
-		
-
-
-
-		}
-		else {
-			temp = "文件不对!";
-			MessageBox(temp);
-		}
-	}
-	*/
-
-
+	
 	CString pathName, fileName, fileTitle;
 
-	//const char* filters = ("all files(*.*)|*.*||");
-	//创建一个可以选择多个文件的CFileDialog
+	
 	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT);
 		
 		
@@ -230,7 +178,7 @@ void CTimerDlg::OnBnClickedDuqu()
 	fileDlg.m_ofn.lpstrFile = ch;
 
 	//对内存块清零
-	ZeroMemory(fileDlg.m_ofn.lpstrFile, sizeof(TCHAR) * fileDlg.m_ofn.nMaxFile);
+	::ZeroMemory(fileDlg.m_ofn.lpstrFile, sizeof(TCHAR) * fileDlg.m_ofn.nMaxFile);
 
 	//显示文件对话框，获得文件名集合
 	if (fileDlg.DoModal() == IDOK) {
@@ -273,32 +221,73 @@ void CTimerDlg::OnBnClickedDuqu()
 		
 		
 		}
-		
+
+		CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
+
 		for (int i = 0; i < ary_fileTitle.GetSize(); i++)
 		{
 			CString Data = ary_fileTitle.GetAt(i);
-			CString Data1, Data2, Data3;
+			CStringA Data1, Data2, Data3;
 
 			AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
 			AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
 			AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
 
-			CStringA Data1A((LPCTSTR)Data1);
-			CStringA Data2A((LPCTSTR)Data2);
-			CStringA Data3A((LPCTSTR)Data3);
+			//CStringA Data1A((LPCTSTR)Data1);
+			//CStringA Data2A((LPCTSTR)Data2);
+			//CStringA Data3A((LPCTSTR)Data3);
 
-			int i1 = Data1A.GetLength();
-			int i2 = Data2A.GetLength();
-			int i3 = Data3A.GetLength();
+			int i1 = Data1.GetLength();
+			int i2 = Data2.GetLength();
+			int i3 = Data3.GetLength();
 
-			ofstream ofs("12月考勤.txt" ,ios::app);
-			ofs.write(Data1A, i1);
-			ofs.write("\t",strlen("\t"));
-			ofs.write(Data2A, i2);
-			ofs.write("\t", strlen("\t"));
-			ofs.write(Data3A, i3);
-			ofs.write("\n", strlen("\n"));
-			ofs.close();
+			CStringA PackName;
+			GetDlgItem(IDC_EDIT1)->GetWindowText(PackName);
+			PackName += ".txt";
+
+			ofstream ofs(PackName,ios::app);
+
+
+			//判断名称是不是同一个人的，如果是同一个人的，直接写后续
+			if (panduan == Data1) {
+				ofs.write("\t", strlen("\t"));
+				ofs.write(Data2, i2);
+				ofs.write("\t", strlen("\t"));
+				ofs.write(Data3, i3);
+				ofs.write("\n", strlen("\n"));
+				ofs.close();
+				
+			}
+			else {
+				if ("" == panduan) {  //这里又用了ifelse是因为要保证第一个文件写入的时候不要有空行
+					ofs.write(Data1, i1);
+					ofs.write("\t", strlen("\t"));
+					ofs.write(Data2, i2);
+					ofs.write("\t", strlen("\t"));
+					ofs.write(Data3, i3);
+					ofs.write("\n", strlen("\n"));
+					ofs.close();
+					panduan = Data1;
+				}
+				else {
+					ofs.write("\n", strlen("\n"));
+					ofs.write(Data1, i1);
+					ofs.write("\t", strlen("\t"));
+					ofs.write(Data2, i2);
+					ofs.write("\t", strlen("\t"));
+					ofs.write(Data3, i3);
+					ofs.write("\n", strlen("\n"));
+					ofs.close();
+					panduan = Data1;
+				}
+				
+				
+			}
+			
+
+
+
+			
 
 			
 		}
@@ -306,4 +295,36 @@ void CTimerDlg::OnBnClickedDuqu()
 	}
 	delete[] ch;
 	
+}
+
+
+void CTimerDlg::OnBnClickedPeizhi()
+{
+
+
+	ifstream ifs("people.txt");
+	CStringA Pname,department;
+	
+	if (ifs) // 有该文件
+	{
+		char ch[255]; // 定义字符数组用来接受读取一行的数据
+		::memset(ch, 0, 255);
+		
+		while (ifs)
+		{
+			ifs.getline(ch, 255);  // getline函数可以读取整行并保存在str数组里
+			CStringA shuju=ch;
+			AfxExtractSubString(Pname, shuju, 0, '-'); //切割出名字
+			AfxExtractSubString(department, shuju, 1, '-');//切割出部门
+			//这里应该换一个集合，判断某个部门下，员工的名字
+			ary_People[Pname] = department;
+			MessageBox(ary_People[Pname]);
+		}
+
+		ifs.close();
+	}
+	
+
+	
+
 }
