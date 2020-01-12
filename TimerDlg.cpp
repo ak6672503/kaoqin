@@ -15,6 +15,7 @@
 #include <fstream>
 #include<tchar.h>
 #include"resource.h"
+#include<vector>
 using namespace std;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -192,12 +193,13 @@ void CTimerDlg::OnBnClickedDuqu()
 		//存放文件的标题
 		CArray<CString, CString> ary_fileTitle;
 
+		map<CString, CString> map_filename;
 		//循环读出每个路径并存放在数组中
 		while (pos_file != NULL) {
 
 			//将文件路径存放在数组中
 			pathName = fileDlg.GetNextPathName(pos_file);
-			ary_filename.Add(pathName);
+			 ary_filename.Add(pathName);
 
 			//获取文件名
 			//从字符串的后面往前遍历，如果遇到'\'则结束遍历，'\'右边的字符串则为文件名
@@ -220,6 +222,43 @@ void CTimerDlg::OnBnClickedDuqu()
 			ary_fileTitle.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
 		
 		
+			//判断出这个人在什么部门之后，就遍历当前文件夹下有没有这个文件夹 如果没有就创建一个
+			{
+				CString Datace = fileName;
+				CStringA Datace1, Datace2, Datace3;
+
+				AfxExtractSubString(Datace1, Datace, 0, '-'); //切割出名字
+				
+				CString csDirPath = "C:\\Users\\wddd\\source\\repos\\Timer\\";
+				
+
+
+				vector<CString> vctPath;
+				//CTimerDlg::GetFileFromDirectory(csDirPath, vctPath);
+				csDirPath += ary_People[Datace1];//获取到人的部门名称
+				//MessageBox(fileName);
+				CStringA strMsg;
+
+				if (!PathIsDirectory(csDirPath)) {
+
+					CreateDirectory(csDirPath, 0);//不存在则创建
+					//ary_filename.GetAt(ary_filename.GetSize() - 1);
+					CopyFile(pathName, csDirPath + "\\" + Datace, FALSE);
+					
+				}
+				else {
+					//MessageBox("文件夹已经存在");
+					CopyFile(pathName, csDirPath + "\\" + Datace, FALSE);
+
+				}
+				//SearchFiles(csDirPath);
+
+
+
+
+			}
+
+
 		}
 
 		CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
@@ -232,14 +271,13 @@ void CTimerDlg::OnBnClickedDuqu()
 			AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
 			AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
 			AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
-
-			//CStringA Data1A((LPCTSTR)Data1);
-			//CStringA Data2A((LPCTSTR)Data2);
-			//CStringA Data3A((LPCTSTR)Data3);
-
 			int i1 = Data1.GetLength();
 			int i2 = Data2.GetLength();
 			int i3 = Data3.GetLength();
+
+			
+
+
 
 			CStringA PackName;
 			GetDlgItem(IDC_EDIT1)->GetWindowText(PackName);
@@ -285,8 +323,7 @@ void CTimerDlg::OnBnClickedDuqu()
 			}
 			
 
-
-
+			
 			
 
 			
@@ -303,28 +340,96 @@ void CTimerDlg::OnBnClickedPeizhi()
 
 
 	ifstream ifs("people.txt");
-	CStringA Pname,department;
+	
 	
 	if (ifs) // 有该文件
 	{
 		char ch[255]; // 定义字符数组用来接受读取一行的数据
 		::memset(ch, 0, 255);
 		
-		while (ifs)
-		{
+		
+			
+			
+
+			/*
+			map<CString, CString>::iterator iter;
+			for (iter = ary_People.begin(); iter != ary_People.end(); iter++){
+			MessageBox(iter->first);
+			MessageBox(iter->second);
+			}*/
+		
+			
+		do {
 			ifs.getline(ch, 255);  // getline函数可以读取整行并保存在str数组里
-			CStringA shuju=ch;
+			CStringA shuju = ch;
 			AfxExtractSubString(Pname, shuju, 0, '-'); //切割出名字
 			AfxExtractSubString(department, shuju, 1, '-');//切割出部门
-			//这里应该换一个集合，判断某个部门下，员工的名字
 			ary_People[Pname] = department;
-			MessageBox(ary_People[Pname]);
-		}
+			//MessageBox(ary_People[Pname]);
+		} while (ifs);
 
 		ifs.close();
+	}
+	else {
+		MessageBox(("没有people文件"));
 	}
 	
 
 	
+	
 
+		
+
+
+
+
+
+
+
+
+}
+
+
+/*void CTimerDlg::GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath){
+
+	MessageBox("刚进到函数");
+
+	HANDLE file;
+	WIN32_FIND_DATA fileData;
+	file = FindFirstFile(csDirPath.GetBuffer(), &fileData);
+	if (file != INVALID_HANDLE_VALUE)
+	{
+		vctPath.push_back(fileData.cFileName);
+		while (FindNextFile(file, &fileData))
+		{
+			vctPath.push_back(fileData.cFileName);
+		}
+	}
+
+	MessageBox("函数出");
+
+
+
+}*/
+
+
+void CTimerDlg::SearchFiles(CString strMusicFolder)
+{
+	CFileFind ff;
+
+	strMusicFolder += _T("\\");
+
+	strMusicFolder += _T("*.*");
+
+	BOOL res = ff.FindFile(strMusicFolder);
+
+	while (res)
+	{
+		res = ff.FindNextFile();
+		if (!ff.IsDirectory() && !ff.IsDots())
+		{
+			MessageBox(ff.GetFilePath());
+		}
+	}
+	ff.Close();
 }

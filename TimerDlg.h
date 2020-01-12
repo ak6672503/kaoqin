@@ -2,6 +2,7 @@
 // TimerDlg.h: 头文件
 //
 #include <map>
+#include<vector>
 using namespace std;
 #pragma once
 
@@ -36,8 +37,11 @@ public:
 	afx_msg void OnBnClickedDuqu();
 	afx_msg void OnBnClickedPeizhi();
 
+	void SearchFiles(CString strMusicFolder);
+
 public:
 	//用CString数组存放人名和对应的单位名称
 	map<CString,CString> ary_People ;
-
+	void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
+	CStringA Pname, department;
 };
