@@ -72,7 +72,6 @@ BEGIN_MESSAGE_MAP(CTimerDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_DUQU, &CTimerDlg::OnBnClickedDuqu)
-	ON_BN_CLICKED(IDC_PEIZHI, &CTimerDlg::OnBnClickedPeizhi)
 END_MESSAGE_MAP()
 
 
@@ -268,63 +267,44 @@ void CTimerDlg::OnBnClickedDuqu()
 
 			//判断名称是不是同一个人的，如果是同一个人的，直接写后续
 			if (panduan == TickName) {
-				ofs.write("\t", strlen("\t"));
-				ofs.write(TickTime, TickTime.GetLength());
-				ofs.write("\t", strlen("\t"));
-				ofs.write(TickCause, TickCause.GetLength());
-				ofs.write("\n", strlen("\n"));
+				ofs.write(TickTime + "\t"+TickCause + "\n", 
+					TickTime.GetLength() + strlen("\t")+ 
+					TickCause.GetLength() + strlen("\n"));
+				
 				ofs.close();
 				
 			}
 			else {
 				if ("" == panduan) {  //这里又用了ifelse是因为要保证第一个文件写入的时候不要有空行
-					ofs.write(TickName, TickName.GetLength());
-					ofs.write("\t", strlen("\t"));
-					ofs.write(TickTime, TickTime.GetLength());
-					ofs.write("\t", strlen("\t"));
-					ofs.write(TickCause, TickCause.GetLength());
-					ofs.write("\n", strlen("\n"));
+					ofs.write(TickName + "\t" + TickTime + "\t"+ TickCause + "\n",
+						TickName.GetLength() + strlen("\t") +
+						TickTime.GetLength() + strlen("\t")+
+						TickCause.GetLength() + strlen("\n"));
+					
 					ofs.close();
 					panduan = TickName;
 				}
 				else {
-					ofs.write("\n", strlen("\n"));
-					ofs.write(TickName, TickName.GetLength());
-					ofs.write("\t", strlen("\t"));
-					ofs.write(TickTime, TickTime.GetLength());
-					ofs.write("\t", strlen("\t"));
-					ofs.write(TickCause, TickCause.GetLength());
-					ofs.write("\n", strlen("\n"));
+					ofs.write("\n"+TickName + "\t" + TickTime + "\t" + TickCause + "\n",
+						strlen("\n")+
+						TickName.GetLength() + strlen("\t") +
+						TickTime.GetLength() + strlen("\t") +
+						TickCause.GetLength() + strlen("\n"));
 					ofs.close();
 					panduan = TickName;
 				}
 				
 				
-			}
-			
-
-			
-			
-
-			
+			}	
 		}
-
 	}
 	delete[] ch;
 	
 }
 
 
-void CTimerDlg::OnBnClickedPeizhi()
-{
 
-	
-	
-		
-}
-
-
-
+//寻找目录下是否有某个文件
 void CTimerDlg::SearchFiles(CString strMusicFolder)
 {
 	CFileFind ff;
@@ -346,6 +326,7 @@ void CTimerDlg::SearchFiles(CString strMusicFolder)
 	ff.Close();
 }
 
+//程序启动的时候默认读取人事清单函数
 void CTimerDlg::GetPeopleList(CString addr)
 {
 	ifstream ifs(addr);
@@ -354,7 +335,7 @@ void CTimerDlg::GetPeopleList(CString addr)
 		char ch[255]; // 定义字符数组用来接受读取一行的数据
 		::memset(ch, 0, 255);
 
-		while (ifs) {//文件中只要还有内容
+		while (!ifs.eof()) {//文件中只要还有内容
 			ifs.getline(ch, 255);  // getline函数可以读取整行并保存在str数组里
 			CStringA Data = ch;
 			AfxExtractSubString(Pname, Data, 0, '-'); //切割出名字
@@ -363,8 +344,10 @@ void CTimerDlg::GetPeopleList(CString addr)
 		}
 		ifs.close();
 	}
-	else {//如果没有
-		AfxMessageBox(("没有people文件"));
+	else {//如果没有，就强行结束本程序
+		AfxMessageBox(("没有people文件，请检查目录下是否有该文件"));
+		HANDLE hself = GetCurrentProcess();
+		TerminateProcess(hself, 0);
 	}
 }
 

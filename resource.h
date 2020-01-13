@@ -7,10 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_TIMER_DIALOG                102
 #define IDR_MAINFRAME                   128
-#define IDC_BUTTON1                     1000
-#define IDC_PEIZHI                      1000
 #define IDC_EDIT1                       1001
-#define IDC_DUQU2                       1002
 #define IDC_DUQU                        1002
 
 // Next default values for new objects
