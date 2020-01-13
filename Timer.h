@@ -27,6 +27,11 @@ public:
 // 实现
 
 	DECLARE_MESSAGE_MAP()
+
+	
+
+
 };
 
 extern CTimerApp theApp;
+	

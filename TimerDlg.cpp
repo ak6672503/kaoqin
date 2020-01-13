@@ -16,6 +16,7 @@
 #include<tchar.h>
 #include"resource.h"
 #include<vector>
+#include "start.h"
 using namespace std;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -108,6 +109,9 @@ BOOL CTimerDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 
+	CStringA addr = ".\\people.txt";
+	GetPeopleList(addr);
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -160,17 +164,10 @@ HCURSOR CTimerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CTimerDlg::OnBnClickedDuqu()
 {
 	
-	
-	CString pathName, fileName, fileTitle;
-
-	
 	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT);
-		
 		
 	//最多可以打开500个文件
 	fileDlg.m_ofn.nMaxFile = 500 * MAX_PATH;
@@ -188,38 +185,30 @@ void CTimerDlg::OnBnClickedDuqu()
 		POSITION pos_file;
 		pos_file = fileDlg.GetStartPosition();
 
-		//用CString数组存放文件的路径
-		CArray<CString, CString> ary_filename;
-		//存放文件的标题
-		CArray<CString, CString> ary_fileTitle;
-
-		map<CString, CString> map_filename;
 		//循环读出每个路径并存放在数组中
 		while (pos_file != NULL) {
 
 			//将文件路径存放在数组中
-			pathName = fileDlg.GetNextPathName(pos_file);
-			 ary_filename.Add(pathName);
+			AllPathName = fileDlg.GetNextPathName(pos_file);
+			ary_filePath.Add(AllPathName);
 
 			//获取文件名
 			//从字符串的后面往前遍历，如果遇到'\'则结束遍历，'\'右边的字符串则为文件名
-			int length = pathName.GetLength();
+			int length = AllPathName.GetLength();
 			for (int i = length - 1; i > 0; i--)
 			{
-				if ('\\' == (pathName.GetAt(i)))
+				if ('\\' == (AllPathName.GetAt(i)))
 				{//判断当前字符是否是'\'
-					fileName = pathName.Right(length - i - 1);
+					fileName = AllPathName.Right(length - i - 1);
 						break;//跳出循环
 				}
-			}//endfor
+			}
 
 			//获取文件名(不包含后缀)
 			//采用CString的Left(int count)截取CString中从左往右数的count个字符
 			//fileName.GetLength()-4中的4表示".dat"四个字符
-
 			fileTitle = fileName.Left(fileName.GetLength() - 4);
-			//AfxMessageBox(fileTitle);
-			ary_fileTitle.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
+			ary_fileName.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
 		
 		
 			//判断出这个人在什么部门之后，就遍历当前文件夹下有没有这个文件夹 如果没有就创建一个
@@ -229,26 +218,26 @@ void CTimerDlg::OnBnClickedDuqu()
 
 				AfxExtractSubString(Datace1, Datace, 0, '-'); //切割出名字
 				
-				CString csDirPath = "C:\\Users\\wddd\\source\\repos\\Timer\\";
+				CString csDirPath = "C:\\Users\\dcgdn2\\source\\repos\\kaoqin\\";
 				
 
 
 				vector<CString> vctPath;
-				//CTimerDlg::GetFileFromDirectory(csDirPath, vctPath);
+				
 				csDirPath += ary_People[Datace1];//获取到人的部门名称
-				//MessageBox(fileName);
-				CStringA strMsg;
-
+				
+				
+				//判断是否有这个文件夹，不存在就创建
 				if (!PathIsDirectory(csDirPath)) {
 
 					CreateDirectory(csDirPath, 0);//不存在则创建
-					//ary_filename.GetAt(ary_filename.GetSize() - 1);
-					CopyFile(pathName, csDirPath + "\\" + Datace, FALSE);
+					
+					CopyFile(AllPathName, csDirPath + "\\" + Datace, FALSE);
 					
 				}
 				else {
 					//MessageBox("文件夹已经存在");
-					CopyFile(pathName, csDirPath + "\\" + Datace, FALSE);
+					CopyFile(AllPathName, csDirPath + "\\" + Datace, FALSE);
 
 				}
 				//SearchFiles(csDirPath);
@@ -263,60 +252,51 @@ void CTimerDlg::OnBnClickedDuqu()
 
 		CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
 
-		for (int i = 0; i < ary_fileTitle.GetSize(); i++)
+		for (int i = 0; i < ary_fileName.GetSize(); i++)
 		{
-			CString Data = ary_fileTitle.GetAt(i);
-			CStringA Data1, Data2, Data3;
-
-			AfxExtractSubString(Data1, Data, 0, '-'); //切割出名字
-			AfxExtractSubString(Data2, Data, 1, '-');//切割出离岗时间
-			AfxExtractSubString(Data3, Data, 2, '-');//切割出离岗事由
-			int i1 = Data1.GetLength();
-			int i2 = Data2.GetLength();
-			int i3 = Data3.GetLength();
-
+			AfxExtractSubString(TickName, ary_fileName.GetAt(i), 0, '-'); //切割出名字
+			AfxExtractSubString(TickTime, ary_fileName.GetAt(i), 1, '-');//切割出离岗时间
+			AfxExtractSubString(TickCause, ary_fileName.GetAt(i), 2, '-');//切割出离岗事由
 			
-
-
-
+			/*
 			CStringA PackName;
 			GetDlgItem(IDC_EDIT1)->GetWindowText(PackName);
 			PackName += ".txt";
-
-			ofstream ofs(PackName,ios::app);
+			*/
+			ofstream ofs(".\\总表.txt",ios::app);
 
 
 			//判断名称是不是同一个人的，如果是同一个人的，直接写后续
-			if (panduan == Data1) {
+			if (panduan == TickName) {
 				ofs.write("\t", strlen("\t"));
-				ofs.write(Data2, i2);
+				ofs.write(TickTime, TickTime.GetLength());
 				ofs.write("\t", strlen("\t"));
-				ofs.write(Data3, i3);
+				ofs.write(TickCause, TickCause.GetLength());
 				ofs.write("\n", strlen("\n"));
 				ofs.close();
 				
 			}
 			else {
 				if ("" == panduan) {  //这里又用了ifelse是因为要保证第一个文件写入的时候不要有空行
-					ofs.write(Data1, i1);
+					ofs.write(TickName, TickName.GetLength());
 					ofs.write("\t", strlen("\t"));
-					ofs.write(Data2, i2);
+					ofs.write(TickTime, TickTime.GetLength());
 					ofs.write("\t", strlen("\t"));
-					ofs.write(Data3, i3);
+					ofs.write(TickCause, TickCause.GetLength());
 					ofs.write("\n", strlen("\n"));
 					ofs.close();
-					panduan = Data1;
+					panduan = TickName;
 				}
 				else {
 					ofs.write("\n", strlen("\n"));
-					ofs.write(Data1, i1);
+					ofs.write(TickName, TickName.GetLength());
 					ofs.write("\t", strlen("\t"));
-					ofs.write(Data2, i2);
+					ofs.write(TickTime, TickTime.GetLength());
 					ofs.write("\t", strlen("\t"));
-					ofs.write(Data3, i3);
+					ofs.write(TickCause, TickCause.GetLength());
 					ofs.write("\n", strlen("\n"));
 					ofs.close();
-					panduan = Data1;
+					panduan = TickName;
 				}
 				
 				
@@ -338,79 +318,11 @@ void CTimerDlg::OnBnClickedDuqu()
 void CTimerDlg::OnBnClickedPeizhi()
 {
 
-
-	ifstream ifs("people.txt");
 	
 	
-	if (ifs) // 有该文件
-	{
-		char ch[255]; // 定义字符数组用来接受读取一行的数据
-		::memset(ch, 0, 255);
 		
-		
-			
-			
-
-			/*
-			map<CString, CString>::iterator iter;
-			for (iter = ary_People.begin(); iter != ary_People.end(); iter++){
-			MessageBox(iter->first);
-			MessageBox(iter->second);
-			}*/
-		
-			
-		do {
-			ifs.getline(ch, 255);  // getline函数可以读取整行并保存在str数组里
-			CStringA shuju = ch;
-			AfxExtractSubString(Pname, shuju, 0, '-'); //切割出名字
-			AfxExtractSubString(department, shuju, 1, '-');//切割出部门
-			ary_People[Pname] = department;
-			//MessageBox(ary_People[Pname]);
-		} while (ifs);
-
-		ifs.close();
-	}
-	else {
-		MessageBox(("没有people文件"));
-	}
-	
-
-	
-	
-
-		
-
-
-
-
-
-
-
-
 }
 
-
-/*void CTimerDlg::GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath){
-
-	MessageBox("刚进到函数");
-
-	HANDLE file;
-	WIN32_FIND_DATA fileData;
-	file = FindFirstFile(csDirPath.GetBuffer(), &fileData);
-	if (file != INVALID_HANDLE_VALUE)
-	{
-		vctPath.push_back(fileData.cFileName);
-		while (FindNextFile(file, &fileData))
-		{
-			vctPath.push_back(fileData.cFileName);
-		}
-	}
-
-	MessageBox("函数出");
-
-
-
-}*/
 
 
 void CTimerDlg::SearchFiles(CString strMusicFolder)
@@ -433,3 +345,27 @@ void CTimerDlg::SearchFiles(CString strMusicFolder)
 	}
 	ff.Close();
 }
+
+void CTimerDlg::GetPeopleList(CString addr)
+{
+	ifstream ifs(addr);
+	if (ifs) // 有该文件
+	{
+		char ch[255]; // 定义字符数组用来接受读取一行的数据
+		::memset(ch, 0, 255);
+
+		while (ifs) {//文件中只要还有内容
+			ifs.getline(ch, 255);  // getline函数可以读取整行并保存在str数组里
+			CStringA Data = ch;
+			AfxExtractSubString(Pname, Data, 0, '-'); //切割出名字
+			AfxExtractSubString(Department, Data, 1, '-');//切割出部门
+			ary_People[Pname] = Department;	  //把部门和人名关联起来
+		}
+		ifs.close();
+	}
+	else {//如果没有
+		AfxMessageBox(("没有people文件"));
+	}
+}
+
+

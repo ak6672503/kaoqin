@@ -40,8 +40,25 @@ public:
 	void SearchFiles(CString strMusicFolder);
 
 public:
-	//用CString数组存放人名和对应的单位名称
-	map<CString,CString> ary_People ;
-	void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
-	CStringA Pname, department;
+	
+	void GetPeopleList(CString addr);
+	
+	CArray<CString, CString> ary_filePath;//存放所有的文件路径，用于遍历
+	
+	CArray<CString, CString> ary_fileName;//存放所有文件的名称不含后缀，用于遍历
+
+	CString AllPathName;//临时存放文件的全路径
+	CString fileName;//临时存放文件的全称
+	CString fileTitle; //临时存放文件的标题(不含后缀)
+
+	CStringA Tick; //假单全称
+	CStringA TickName;//假单名字
+	CStringA TickTime; //离岗时间
+	CStringA TickCause; //离岗事由
+
+	//void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
+	//寻找文件函数的申明
+	 map<CString, CString> ary_People;//用存放人名和对应的单位名称
+	 CStringA Pname, Department;//人名、对应的部门
+	
 };

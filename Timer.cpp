@@ -10,6 +10,11 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include <fstream>
+#include "start.h"
+
+using namespace std;
+
 
 
 // CTimerApp
@@ -104,10 +109,11 @@ BOOL CTimerApp::InitInstance()
 	//  而不是启动应用程序的消息泵。
 
 
-	//写配置文件
+	//启动的时候先读取人事清单
 	
-
+	
 
 	return FALSE;
 }
+
 
