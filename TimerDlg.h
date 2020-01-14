@@ -41,8 +41,11 @@ public:
 
 public:
 	
-	void GetPeopleList(CString addr);
-	
+	void GetPeopleList(CString addr); //获取人事清单函数申明
+
+	void PaintText(CString in, CStringA Data1, CStringA Data2, CStringA Data3,CStringA is_first);
+
+
 	CArray<CString, CString> ary_filePath;//存放所有的文件路径，用于遍历
 	
 	CArray<CString, CString> ary_fileName;//存放所有文件的名称不含后缀，用于遍历
@@ -56,9 +59,14 @@ public:
 	CStringA TickTime; //离岗时间
 	CStringA TickCause; //离岗事由
 
+	CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
+
+
 	//void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
 	//寻找文件函数的申明
 	 map<CString, CString> ary_People;//用存放人名和对应的单位名称
 	 CStringA Pname, Department;//人名、对应的部门
 	
+
+
 };

@@ -179,6 +179,11 @@ void CTimerDlg::OnBnClickedDuqu()
 
 	//显示文件对话框，获得文件名集合
 	if (fileDlg.DoModal() == IDOK) {
+		TCHAR ch1[10];
+		CStringA bb;
+		GetDlgItem(IDC_EDIT1)->GetWindowTextA(ch1, 10);
+		bb = ch1;
+		CreateDirectory(".\\"+bb, 0);//不存在则创建
 
 		//获取第一个文件的位置
 		POSITION pos_file;
@@ -210,96 +215,28 @@ void CTimerDlg::OnBnClickedDuqu()
 			ary_fileName.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
 		
 		
-			//判断出这个人在什么部门之后，就遍历当前文件夹下有没有这个文件夹 如果没有就创建一个
-			{
-				CString Datace = fileName;
-				CStringA Datace1, Datace2, Datace3;
+				
+				AfxExtractSubString(TickName, fileTitle, 0, '-'); //切割出名字
+				AfxExtractSubString(TickTime, fileTitle, 1, '-');//切割出离岗时间
+				AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
-				AfxExtractSubString(Datace1, Datace, 0, '-'); //切割出名字
+				CString csDirPath = ".\\" + bb+".\\";
+				//通过部门名称+原路径 变成部门文件夹
+				csDirPath += ary_People[TickName];
 				
-				CString csDirPath = "C:\\Users\\dcgdn2\\source\\repos\\kaoqin\\";
-				
+				CreateDirectory(csDirPath, 0);//不存在则创建
+
+				CopyFile(AllPathName, csDirPath + "\\" + fileName, FALSE);
 
 
-				vector<CString> vctPath;
-				
-				csDirPath += ary_People[Datace1];//获取到人的部门名称
-				
-				
-				//判断是否有这个文件夹，不存在就创建
-				if (!PathIsDirectory(csDirPath)) {
-
-					CreateDirectory(csDirPath, 0);//不存在则创建
 					
-					CopyFile(AllPathName, csDirPath + "\\" + Datace, FALSE);
+					CStringA shiyixia = csDirPath + "\\" + ary_People[TickName]+".txt";
 					
-				}
-				else {
-					//MessageBox("文件夹已经存在");
-					CopyFile(AllPathName, csDirPath + "\\" + Datace, FALSE);
-
-				}
-				//SearchFiles(csDirPath);
-
-
-
-
-			}
-
-
-		}
-
-		CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
-
-		for (int i = 0; i < ary_fileName.GetSize(); i++)
-		{
-			AfxExtractSubString(TickName, ary_fileName.GetAt(i), 0, '-'); //切割出名字
-			AfxExtractSubString(TickTime, ary_fileName.GetAt(i), 1, '-');//切割出离岗时间
-			AfxExtractSubString(TickCause, ary_fileName.GetAt(i), 2, '-');//切割出离岗事由
-			
-			/*
-			CStringA PackName;
-			GetDlgItem(IDC_EDIT1)->GetWindowText(PackName);
-			PackName += ".txt";
-			*/
-			ofstream ofs(".\\总表.txt",ios::app);
-
-
-			//判断名称是不是同一个人的，如果是同一个人的，直接写后续
-			if (panduan == TickName) {
-				ofs.write(TickTime + "\t"+TickCause + "\n", 
-					TickTime.GetLength() + strlen("\t")+ 
-					TickCause.GetLength() + strlen("\n"));
-				
-				ofs.close();
-				
-			}
-			else {
-				if ("" == panduan) {  //这里又用了ifelse是因为要保证第一个文件写入的时候不要有空行
-					ofs.write(TickName + "\t" + TickTime + "\t"+ TickCause + "\n",
-						TickName.GetLength() + strlen("\t") +
-						TickTime.GetLength() + strlen("\t")+
-						TickCause.GetLength() + strlen("\n"));
-					
-					ofs.close();
-					panduan = TickName;
-				}
-				else {
-					ofs.write("\n"+TickName + "\t" + TickTime + "\t" + TickCause + "\n",
-						strlen("\n")+
-						TickName.GetLength() + strlen("\t") +
-						TickTime.GetLength() + strlen("\t") +
-						TickCause.GetLength() + strlen("\n"));
-					ofs.close();
-					panduan = TickName;
-				}
-				
-				
-			}	
+					 PaintText(shiyixia,TickName, TickTime, TickCause, panduan);
+					 panduan = TickName;
 		}
 	}
 	delete[] ch;
-	
 }
 
 
@@ -329,10 +266,10 @@ void CTimerDlg::SearchFiles(CString strMusicFolder)
 //程序启动的时候默认读取人事清单函数
 void CTimerDlg::GetPeopleList(CString addr)
 {
+	char ch[255]; // 定义字符数组用来接受读取一行的数据
 	ifstream ifs(addr);
 	if (ifs) // 有该文件
 	{
-		char ch[255]; // 定义字符数组用来接受读取一行的数据
 		::memset(ch, 0, 255);
 
 		while (!ifs.eof()) {//文件中只要还有内容
@@ -349,6 +286,34 @@ void CTimerDlg::GetPeopleList(CString addr)
 		HANDLE hself = GetCurrentProcess();
 		TerminateProcess(hself, 0);
 	}
+}
+
+
+
+void  CTimerDlg::PaintText(CString in,CStringA Data1, CStringA Data2, CStringA Data3,CStringA is_first) {
+	
+	ofstream ofs(in, ios::app);
+
+	if (Data1 != is_first){
+	ofs.write("\n", strlen("\n"));
+	ofs.write(Data1, Data1.GetLength());
+	ofs.write("\t", strlen("\t"));
+	ofs.write(Data2, Data2.GetLength());
+	ofs.write("\t", strlen("\t"));
+	ofs.write(Data3, Data3.GetLength());
+	ofs.write("\n", strlen("\n"));
+	}
+	else {
+		
+		ofs.write("\t", strlen("\t"));
+		ofs.write(Data2, Data2.GetLength());
+		ofs.write("\t", strlen("\t"));
+		ofs.write(Data3, Data3.GetLength());
+		ofs.write("\n", strlen("\n"));
+		
+	}
+	ofs.close();
+
 }
 
 
