@@ -65,6 +65,7 @@ CTimerDlg::CTimerDlg(CWnd* pParent /*=nullptr*/)
 void CTimerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_COMBO1, m_cb);
 }
 
 BEGIN_MESSAGE_MAP(CTimerDlg, CDialogEx)
@@ -111,6 +112,7 @@ BOOL CTimerDlg::OnInitDialog()
 	CStringA addr = ".\\people.txt";
 	GetPeopleList(addr);
 
+	m_cb.SetCurSel(0);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -179,11 +181,12 @@ void CTimerDlg::OnBnClickedDuqu()
 
 	//显示文件对话框，获得文件名集合
 	if (fileDlg.DoModal() == IDOK) {
-		TCHAR ch1[10];
-		CStringA bb;
-		GetDlgItem(IDC_EDIT1)->GetWindowTextA(ch1, 10);
-		bb = ch1;
-		CreateDirectory(".\\"+bb, 0);//不存在则创建
+		int nIndex = m_cb.GetCurSel();
+
+		CString strCBText;
+
+		m_cb.GetLBText(nIndex, strCBText);
+		CreateDirectory(".\\"+ strCBText+"考勤", 0);//不存在则创建
 
 		//获取第一个文件的位置
 		POSITION pos_file;
@@ -220,7 +223,7 @@ void CTimerDlg::OnBnClickedDuqu()
 				AfxExtractSubString(TickTime, fileTitle, 1, '-');//切割出离岗时间
 				AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
-				CString csDirPath = ".\\" + bb+".\\";
+				CString csDirPath = ".\\" + strCBText + "考勤" +".\\";
 				//通过部门名称+原路径 变成部门文件夹
 				csDirPath += ary_People[TickName];
 				
