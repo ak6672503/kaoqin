@@ -26,12 +26,12 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// 对话框数据
+	// 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 // 实现
@@ -53,8 +53,6 @@ END_MESSAGE_MAP()
 
 
 // CTimerDlg 对话框
-
-
 
 CTimerDlg::CTimerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TIMER_DIALOG, pParent)
@@ -167,13 +165,13 @@ HCURSOR CTimerDlg::OnQueryDragIcon()
 
 void CTimerDlg::OnBnClickedDuqu()
 {
-	
+
 	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT);
-		
+
 	//最多可以打开500个文件
 	fileDlg.m_ofn.nMaxFile = 500 * MAX_PATH;
 
-	 char* ch = new CHAR[fileDlg.m_ofn.nMaxFile];
+	char* ch = new CHAR[fileDlg.m_ofn.nMaxFile];
 	fileDlg.m_ofn.lpstrFile = ch;
 
 	//对内存块清零
@@ -183,10 +181,10 @@ void CTimerDlg::OnBnClickedDuqu()
 	if (fileDlg.DoModal() == IDOK) {
 		int nIndex = m_cb.GetCurSel();
 
-		CString strCBText;
+		CString strCBText; //
 
 		m_cb.GetLBText(nIndex, strCBText);
-		CreateDirectory(".\\"+ strCBText+"考勤", 0);//不存在则创建
+		CreateDirectory(".\\" + strCBText + "考勤", 0);//不存在则创建
 
 		//获取第一个文件的位置
 		POSITION pos_file;
@@ -207,7 +205,7 @@ void CTimerDlg::OnBnClickedDuqu()
 				if ('\\' == (AllPathName.GetAt(i)))
 				{//判断当前字符是否是'\'
 					fileName = AllPathName.Right(length - i - 1);
-						break;//跳出循环
+					break;//跳出循环
 				}
 			}
 
@@ -216,27 +214,23 @@ void CTimerDlg::OnBnClickedDuqu()
 			//fileName.GetLength()-4中的4表示".dat"四个字符
 			fileTitle = fileName.Left(fileName.GetLength() - 4);
 			ary_fileName.Add(fileTitle);//将文件名(不包含后缀)添加到数组中
-		
-		
-				
-				AfxExtractSubString(TickName, fileTitle, 0, '-'); //切割出名字
-				AfxExtractSubString(TickTime, fileTitle, 1, '-');//切割出离岗时间
-				AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
-				CString csDirPath = ".\\" + strCBText + "考勤" +".\\";
-				//通过部门名称+原路径 变成部门文件夹
-				csDirPath += ary_People[TickName];
-				
-				CreateDirectory(csDirPath, 0);//不存在则创建
+			AfxExtractSubString(TickName, fileTitle, 0, '-'); //切割出名字
+			AfxExtractSubString(TickTime, fileTitle, 1, '-');//切割出离岗时间
+			AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
-				CopyFile(AllPathName, csDirPath + "\\" + fileName, FALSE);
+			CString csDirPath = ".\\" + strCBText + "考勤" + ".\\";
+			//通过部门名称+原路径 变成部门文件夹
+			csDirPath += ary_People[TickName];
 
+			CreateDirectory(csDirPath, 0);//不存在则创建
 
-					
-					CStringA shiyixia = csDirPath + "\\" + ary_People[TickName]+".txt";
-					
-					 PaintText(shiyixia,TickName, TickTime, TickCause, panduan);
-					 panduan = TickName;
+			CopyFile(AllPathName, csDirPath + "\\" + fileName, FALSE);
+
+			CStringA shiyixia = csDirPath + "\\" + ary_People[TickName] + ".txt";
+
+			PaintText(shiyixia, TickName, TickTime, TickCause, panduan);
+			panduan = TickName;
 		}
 	}
 	delete[] ch;
@@ -293,27 +287,27 @@ void CTimerDlg::GetPeopleList(CString addr)
 
 
 
-void  CTimerDlg::PaintText(CString in,CStringA Data1, CStringA Data2, CStringA Data3,CStringA is_first) {
-	
+void  CTimerDlg::PaintText(CString in, CStringA Data1, CStringA Data2, CStringA Data3, CStringA is_first) {
+
 	ofstream ofs(in, ios::app);
 
-	if (Data1 != is_first){
-	ofs.write("\n", strlen("\n"));
-	ofs.write(Data1, Data1.GetLength());
-	ofs.write("\t", strlen("\t"));
-	ofs.write(Data2, Data2.GetLength());
-	ofs.write("\t", strlen("\t"));
-	ofs.write(Data3, Data3.GetLength());
-	ofs.write("\n", strlen("\n"));
-	}
-	else {
-		
+	if (Data1 != is_first) {
+		ofs.write("\n", strlen("\n"));
+		ofs.write(Data1, Data1.GetLength());
 		ofs.write("\t", strlen("\t"));
 		ofs.write(Data2, Data2.GetLength());
 		ofs.write("\t", strlen("\t"));
 		ofs.write(Data3, Data3.GetLength());
 		ofs.write("\n", strlen("\n"));
-		
+	}
+	else {
+
+		ofs.write("\t", strlen("\t"));
+		ofs.write(Data2, Data2.GetLength());
+		ofs.write("\t", strlen("\t"));
+		ofs.write(Data3, Data3.GetLength());
+		ofs.write("\n", strlen("\n"));
+
 	}
 	ofs.close();
 
