@@ -11,7 +11,7 @@
 #define new DEBUG_NEW
 #endif
 #include <fstream>
-#include "start.h"
+
 
 using namespace std;
 

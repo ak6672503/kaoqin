@@ -35,20 +35,25 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedDuqu();
-	afx_msg void OnBnClickedPeizhi();
+	//afx_msg void OnBnClickedPeizhi();
 
 	void SearchFiles(CString strMusicFolder);
 
 public:
-	
-	void GetPeopleList(CString addr); //获取人事清单函数申明
+	//获取人事清单函数申明
+	void GetPeopleList(CString addr); 
+	//获取部门名称函数声明
+	void Getdepartment(CString addr);
 
+	//打印函数
 	void PaintText(CString in, CStringA Data1, CStringA Data2, CStringA Data3,CStringA is_first);
 
 
 	CArray<CString, CString> ary_filePath;//存放所有的文件路径，用于遍历
 	
 	CArray<CString, CString> ary_fileName;//存放所有文件的名称不含后缀，用于遍历
+
+	CArray<CString, CString> ary_DepName;//存放所有部门的名称
 
 	CString AllPathName;//临时存放文件的全路径
 	CString fileName;//临时存放文件的全称
@@ -60,7 +65,8 @@ public:
 	CStringA TickCause; //离岗事由
 
 	CStringA panduan = ""; //判断如果有内容，就证明是同一个人的，如果不是就是新人
-
+	CStringA PeopleListAddr; //人事清单地址
+	CStringA DepListAddr; //部门清单地址
 
 	//void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
 	//寻找文件函数的申明
@@ -69,5 +75,11 @@ public:
 	
 
 
-	 CComboBox m_cb;
+	 CComboBox m_cb; //下拉列表控件
+
+
+	 afx_msg void OnBnClickedGetlist();
+	 afx_msg void OnBnClickedYuebao();
+
+	 
 };
