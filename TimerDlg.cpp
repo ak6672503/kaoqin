@@ -316,6 +316,7 @@ void CTimerDlg::Getdepartment(CString addr) {
 	}
 }
 
+//打印函数
 void  CTimerDlg::PaintText(CString in, CStringA Data1, CStringA Data2, CStringA Data3, CStringA is_first) {
 
 	ofstream ofs(in, ios::app);
@@ -343,8 +344,7 @@ void  CTimerDlg::PaintText(CString in, CStringA Data1, CStringA Data2, CStringA 
 }
 
 
-
-
+//生成人事清单，但是要按时更新
 void CTimerDlg::OnBnClickedGetlist()
 {
 	ofstream ofs(PeopleListAddr, ios::app);
@@ -412,7 +412,7 @@ void CTimerDlg::OnBnClickedGetlist()
 	
 }
 
-
+//月报查询哪个单位没有交
 void CTimerDlg::OnBnClickedYuebao()
 {
 
