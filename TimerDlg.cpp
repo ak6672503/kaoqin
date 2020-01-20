@@ -64,6 +64,9 @@ void CTimerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_cb);
+	DDX_Text(pDX, IDC_NAME, T_name);
+	DDX_Text(pDX, IDC_TIME, T_time);
+	DDX_Text(pDX, IDC_CAUSE, T_cause);
 }
 
 BEGIN_MESSAGE_MAP(CTimerDlg, CDialogEx)
@@ -73,6 +76,8 @@ BEGIN_MESSAGE_MAP(CTimerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_DUQU, &CTimerDlg::OnBnClickedDuqu)
 	ON_BN_CLICKED(IDC_GETLIST, &CTimerDlg::OnBnClickedGetlist)
 	ON_BN_CLICKED(IDC_YUEBAO, &CTimerDlg::OnBnClickedYuebao)
+	ON_BN_CLICKED(IDC_GETYB, &CTimerDlg::OnBnClickedGetyb)
+	ON_BN_CLICKED(IDC_INPUT, &CTimerDlg::OnBnClickedInput)
 END_MESSAGE_MAP()
 
 
@@ -186,11 +191,9 @@ void CTimerDlg::OnBnClickedDuqu()
 	//显示文件对话框，获得文件名集合
 	if (fileDlg.DoModal() == IDOK) {
 		int nIndex = m_cb.GetCurSel();
-
-		CString strCBText; //下拉框获取到的文本内容
-
 		m_cb.GetLBText(nIndex, strCBText);
-		CreateDirectory(".\\" + strCBText + "考勤", 0);//不存在则创建
+		bagaddr = ".\\" + strCBText + "考勤";
+		CreateDirectory(bagaddr, 0);//不存在则创建
 
 		//获取第一个文件的位置
 		POSITION pos_file;
@@ -225,7 +228,8 @@ void CTimerDlg::OnBnClickedDuqu()
 			AfxExtractSubString(TickTime, fileTitle, 1, '-');//切割出离岗时间
 			AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
-			CString csDirPath = ".\\" + strCBText + "考勤" + ".\\";
+			
+			CString csDirPath = bagaddr + ".\\";
 			//通过部门名称+原路径 变成部门文件夹
 			csDirPath += ary_People[TickName];
 
@@ -503,4 +507,70 @@ void CTimerDlg::OnBnClickedYuebao()
 		MessageBox("数据处理完毕");
 
 	}
+}
+
+//生成部门清单，但是要按时更新
+void CTimerDlg::OnBnClickedGetyb()
+{
+	ofstream ofs(DepListAddr, ios::app);
+	if (ofs) {
+		ofs.write("公安\n", strlen("公安\n"));
+		ofs.write("市场监管\n", strlen("市场监管\n"));
+		ofs.write("不动产登记中心\n", strlen("不动产登记中心\n"));
+		ofs.write("房产交易中心\n", strlen("房产交易中心\n"));
+		ofs.write("交通\n", strlen("交通\n"));
+		ofs.write("社保\n", strlen("社保\n"));
+		ofs.write("人社\n", strlen("人社\n"));
+		ofs.write("自然资源\n", strlen("自然资源\n"));
+		ofs.write("发改\n", strlen("发改\n"));
+		ofs.write("住管\n", strlen("住管\n"));
+		ofs.write("生态环境\n", strlen("生态环境\n"));
+		ofs.write("供水\n", strlen("供水\n"));
+		ofs.write("供电\n", strlen("供电\n"));
+		ofs.write("燃气\n", strlen("燃气\n"));
+		ofs.write("广播电视\n", strlen("广播电视\n"));
+		ofs.write("税务\n", strlen("税务\n"));
+		ofs.write("婚登\n", strlen("婚登\n"));
+		ofs.write("电信\n", strlen("电信\n"));
+		ofs.write("综窗\n", strlen("综窗\n"));
+
+		ofs.close();
+		MessageBox("清单生成完毕，清单更新日期2020/01/18");
+
+
+
+	}
+			
+}
+
+
+void CTimerDlg::OnBnClickedInput()
+{
+	//先获取到要文本框中的数据
+	  
+	//	T_name = "洪爱萍";
+	//T_time = "1月4日";
+	//T_cause = "公出";
+	//做记事本，先判断有没有生成该文件夹的考勤，如果没有 就新建
+	UpdateData();
+	int nIndex = m_cb.GetCurSel();
+	m_cb.GetLBText(nIndex, strCBText);
+	bagaddr = ".\\" + strCBText + "考勤";
+	CreateDirectory(bagaddr, 0);//这里是创建几月份考勤包
+	
+	bagaddr+= "\\";
+	bagaddr += ary_People[T_name];
+	CreateDirectory(bagaddr, 0);//这里是创建部门的文件夹了
+
+	bagaddr += "\\" + ary_People[T_name] + ".txt";
+
+	PaintText(bagaddr, T_name, T_time, T_cause, panduan);
+	panduan = T_name;
+
+
+
+
+
+
+
 }

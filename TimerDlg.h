@@ -68,6 +68,9 @@ public:
 	CStringA PeopleListAddr; //人事清单地址
 	CStringA DepListAddr; //部门清单地址
 
+	CString strCBText; //下拉框获取到的文本内容
+	CStringA bagaddr;
+
 	//void GetFileFromDirectory(CString csDirPath, vector<CString>& vctPath);
 	//寻找文件函数的申明
 	 map<CString, CString> ary_People;//用存放人名和对应的单位名称
@@ -82,4 +85,9 @@ public:
 	 afx_msg void OnBnClickedYuebao();
 
 	 
+	 afx_msg void OnBnClickedGetyb();
+	 afx_msg void OnBnClickedInput();
+	 CStringA T_name;
+	 CStringA T_time;
+	 CStringA T_cause;
 };

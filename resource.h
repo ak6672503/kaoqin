@@ -8,6 +8,7 @@
 #define IDD_TIMER_DIALOG                102
 #define IDR_MAINFRAME                   128
 #define IDC_EDIT1                       1001
+#define IDC_NAME                        1001
 #define IDC_DUQU                        1002
 #define IDC_LIST1                       1003
 #define IDC_COMBO1                      1004
@@ -15,7 +16,9 @@
 #define IDC_YUEBAO                      1006
 #define IDC_GETYB                       1007
 #define IDC_EDIT2                       1008
+#define IDC_TIME                        1008
 #define IDC_EDIT3                       1009
+#define IDC_CAUSE                       1009
 #define IDC_BUTTON2                     1010
 #define IDC_INPUT                       1010
 
