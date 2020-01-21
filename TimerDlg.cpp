@@ -290,12 +290,10 @@ void CTimerDlg::GetPeopleList(CString addr)
 		ifs.close();
 	}
 	else {//如果没有，就强行结束本程序
-		AfxMessageBox(("没有people文件，请检查目录下是否有该文件"));
+	//	AfxMessageBox(("没有people文件，请检查目录下是否有该文件"));
+		GetDlgItem(IDC_STA1)->SetWindowTextA("没有people文件，请检查目录下是否有该文件");
+		//GetDlgItem(IDC_STA1)->
 		
-		/*
-		HANDLE hself = GetCurrentProcess();
-		TerminateProcess(hself, 0);
-		*/
 	}
 }
 
@@ -315,7 +313,8 @@ void CTimerDlg::Getdepartment(CString addr) {
 		ifs.close();
 	}
 	else {//如果没有
-		AfxMessageBox(("没有找到部门文件，请检查目录下是否有该文件"));
+		//AfxMessageBox(("没有找到部门文件，请检查目录下是否有该文件"));
+		GetDlgItem(IDC_STA2)->SetWindowTextA("没有dep文件，请检查目录下是否有该文件");
 
 	}
 }
@@ -407,10 +406,11 @@ void CTimerDlg::OnBnClickedGetlist()
 		ofs.write("刘秀红-自然资源局\n", strlen("刘秀红-自然资源局\n"));
 		ofs.write("胡红英-自然资源局\n", strlen("胡红英-自然资源局\n"));
 		ofs.write("张莹莹-自然资源局", strlen("张莹莹-自然资源局"));
+		GetDlgItem(IDC_STA1)->SetWindowTextA("人事清单生成完毕，清单更新日期2020/01/18");
 
 		ofs.close();
-		MessageBox("人事清单生成完毕，清单更新日期2020/01/18");
-			
+		//MessageBox("");
+
 			
 	}
 	
@@ -533,9 +533,8 @@ void CTimerDlg::OnBnClickedGetyb()
 		ofs.write("婚登\n", strlen("婚登\n"));
 		ofs.write("电信\n", strlen("电信\n"));
 		ofs.write("综窗\n", strlen("综窗\n"));
-
+		GetDlgItem(IDC_STA2)->SetWindowTextA("清单生成完毕，清单更新日期2020/01/188");
 		ofs.close();
-		MessageBox("清单生成完毕，清单更新日期2020/01/18");
 
 
 
@@ -546,11 +545,7 @@ void CTimerDlg::OnBnClickedGetyb()
 
 void CTimerDlg::OnBnClickedInput()
 {
-	//先获取到要文本框中的数据
-	  
-	//	T_name = "洪爱萍";
-	//T_time = "1月4日";
-	//T_cause = "公出";
+	
 	//做记事本，先判断有没有生成该文件夹的考勤，如果没有 就新建
 	UpdateData();
 	int nIndex = m_cb.GetCurSel();
@@ -568,6 +563,7 @@ void CTimerDlg::OnBnClickedInput()
 	panduan = T_name;
 
 
+	GetDlgItem(IDC_STA2)->SetWindowTextA(T_name+"离岗数据生成完毕");
 
 
 
