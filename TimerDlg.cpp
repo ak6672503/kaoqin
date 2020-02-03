@@ -229,7 +229,7 @@ void CTimerDlg::OnBnClickedDuqu()
 			AfxExtractSubString(TickCause, fileTitle, 2, '-');//切割出离岗事由
 
 			
-			CString csDirPath = bagaddr + ".\\";
+			CString csDirPath = bagaddr + "\\";
 			//通过部门名称+原路径 变成部门文件夹
 			csDirPath += ary_People[TickName];
 
@@ -562,11 +562,5 @@ void CTimerDlg::OnBnClickedInput()
 	PaintText(bagaddr, T_name, T_time, T_cause, panduan);
 	panduan = T_name;
 
-
 	GetDlgItem(IDC_STA2)->SetWindowTextA(T_name+"离岗数据生成完毕");
-
-
-
-
-
 }
