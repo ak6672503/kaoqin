@@ -477,34 +477,28 @@ void CTimerDlg::OnBnClickedYuebao()
 
 		}
 
-
-
-
-
 		ofstream in(".\\" + strCBText + "月报" + "\\" + "没交的单位.txt", ios::app);
 
 		//写下哪个单位没交
 		for (int i = 0; i < ary_DepName.GetSize(); i++) {
-			in.write(ary_DepName.GetAt(i) + "\t", strlen(ary_DepName.GetAt(i) + "\t"));
-			
-			CTime t = CTime::GetCurrentTime();
-			int m = t.GetMonth(); //获取当前月份  
-			int d = t.GetDay(); //获得几号  
-			int h = t.GetHour(); //获取当前为几时   
-			int mm = t.GetMinute(); //获取分钟  
-			CStringA yue,ri,shi,fen;
-			yue.Format(_T("%d"), m);
-			ri.Format(_T("%d"), d);
-			shi.Format(_T("%d"), h);
-			fen.Format(_T("%d"), mm);
-
-
-			
-			in.write("\n"+yue+"月"+ri+"日"+shi+"时"+fen+"分", 
-				strlen("\n" + yue + "月" + ri + "日" + shi + "时" + fen + "分"));
-
+			in.write(ary_DepName.GetAt(i) + "\n", strlen(ary_DepName.GetAt(i) + "\n"));
 		}
-		MessageBox("数据处理完毕");
+		//in.write("\n", strlen("\n"));
+		CTime t = CTime::GetCurrentTime();
+		int m = t.GetMonth(); //获取当前月份  
+		int d = t.GetDay(); //获得几号  
+		int h = t.GetHour(); //获取当前为几时   
+		int mm = t.GetMinute(); //获取分钟  
+		CStringA yue, ri, shi, fen;
+		yue.Format(_T("%d"), m);
+		ri.Format(_T("%d"), d);
+		shi.Format(_T("%d"), h);
+		fen.Format(_T("%d"), mm);
+
+		in.write( yue + "月" + ri + "日" + shi + "时" + fen + "分",
+			strlen( yue + "月" + ri + "日" + shi + "时" + fen + "分"));
+
+		GetDlgItem(IDC_STA2)->SetWindowTextA("数据处理完毕");
 
 	}
 }
