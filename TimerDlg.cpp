@@ -352,7 +352,7 @@ void CTimerDlg::OnBnClickedGetlist()
 {
 	ofstream ofs(PeopleListAddr, ios::app);
 	if (ofs) {
-		ofs.write("钟巧仪-中国电信\n", strlen("钟巧仪-中国电信\n"));
+		ofs.write("陈秋-中国电信\n", strlen("陈秋-中国电信\n"));
 		ofs.write("凌大光-房管所\n", strlen("凌大光-房管所\n"));
 		ofs.write("龚伍英-房管所\n", strlen("龚伍英-房管所\n"));
 		ofs.write("钟美莲-房管所\n", strlen("钟美莲-房管所\n"));
@@ -385,7 +385,7 @@ void CTimerDlg::OnBnClickedGetlist()
 		ofs.write("陈俐烨-综合窗口\n", strlen("陈俐烨-综合窗口\n"));
 		ofs.write("温紫媚-综合窗口\n", strlen("温紫媚-综合窗口\n"));
 		ofs.write("蒋健-综合窗口\n", strlen("蒋健-综合窗口\n"));
-		ofs.write("谢年盛-综合窗口\n", strlen("谢年盛-综合窗口\n"));
+		ofs.write("聂嘉雯-综合窗口\n", strlen("聂嘉雯-综合窗口\n"));
 		ofs.write("刘彦君-综合窗口\n", strlen("刘彦君-综合窗口\n"));
 		ofs.write("何倩玲-综合窗口\n", strlen("何倩玲-综合窗口\n"));
 		ofs.write("黄丽-综合窗口\n", strlen("黄丽-综合窗口\n"));
@@ -394,7 +394,7 @@ void CTimerDlg::OnBnClickedGetlist()
 		ofs.write("邓伟云-综合窗口\n", strlen("邓伟云-综合窗口\n"));
 		ofs.write("曾智鹏-综合窗口\n", strlen("曾智鹏-综合窗口\n"));
 		ofs.write("李翠连-综合窗口\n", strlen("李翠连-综合窗口\n"));
-		ofs.write("蒲颖-综合窗口\n", strlen("蒲颖-综合窗口\n"));
+		ofs.write("陈俊-综合窗口\n", strlen("陈俊-综合窗口\n"));
 		ofs.write("欧倩倩-综合窗口\n", strlen("欧倩倩-综合窗口\n"));
 		ofs.write("刘银霞-综合窗口\n", strlen("刘银霞-综合窗口\n"));
 		ofs.write("黄玉珍-综合窗口\n", strlen("黄玉珍-综合窗口\n"));
@@ -406,7 +406,7 @@ void CTimerDlg::OnBnClickedGetlist()
 		ofs.write("刘秀红-自然资源局\n", strlen("刘秀红-自然资源局\n"));
 		ofs.write("胡红英-自然资源局\n", strlen("胡红英-自然资源局\n"));
 		ofs.write("张莹莹-自然资源局", strlen("张莹莹-自然资源局"));
-		GetDlgItem(IDC_STA1)->SetWindowTextA("人事清单生成完毕，清单更新日期2020/01/18");
+		GetDlgItem(IDC_STA1)->SetWindowTextA("人事清单生成完毕，清单更新日期2020/03/02");
 
 		ofs.close();
 		//MessageBox("");
